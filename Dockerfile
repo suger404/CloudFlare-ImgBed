@@ -1,14 +1,19 @@
-FROM ubuntu:20.04  # 选择一个含有 GLIBC 2.29 的系统
+# 使用支持 GLIBC 2.29 的基础镜像
+FROM ubuntu:20.04
 
-# 安装 Node.js 和必要工具
-RUN apt-get update && apt-get install -y curl
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -  # 使用 Node.js 16.x
-RUN apt-get install -y nodejs
+# 安装 Node.js 和必要的依赖
+RUN apt-get update && apt-get install -y curl gnupg && \
+    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -y nodejs
 
-# 复制你的项目文件到容器中
-COPY . /app
+# 设置工作目录
 WORKDIR /app
 
-# 安装依赖并运行你的项目
+# 将本地代码复制到容器中
+COPY . .
+
+# 安装项目依赖
 RUN npm install
+
+# 运行项目
 CMD ["npm", "run", "start"]
