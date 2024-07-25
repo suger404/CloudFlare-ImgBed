@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y nodejs
 WORKDIR /app
 
 # 克隆项目
-RUN git clone https://github.com/cf-pages/Telegraph-Image .
+RUN git clone https://github.com/candies404/CloudFlare-ImgBed .
 
 # 安装项目依赖
 RUN npm install
