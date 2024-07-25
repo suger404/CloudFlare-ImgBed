@@ -1,19 +1,26 @@
-# 使用支持 GLIBC 2.29 的基础镜像
-FROM ubuntu:20.04
-
-# 安装 Node.js 和必要的依赖
-RUN apt-get update && apt-get install -y curl gnupg && \
-    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get install -y nodejs
+# 使用 Node.js 作为基础镜像
+FROM node:16
 
 # 设置工作目录
 WORKDIR /app
 
-# 将本地代码复制到容器中
-COPY . .
+# 克隆代码
+RUN git clone https://github.com/cf-pages/Telegraph-Image .
 
-# 安装项目依赖
+# 安装依赖
 RUN npm install
+RUN npm install -g wrangler
 
-# 运行项目
-CMD ["npm", "run", "start"]
+# 设置环境变量
+ENV BASIC_USER=admin
+ENV BASIC_PASS=123
+ENV AUTH_CODE=123123
+
+# 暴露端口
+EXPOSE 8080
+
+# 创建数据持久化目录
+RUN mkdir data
+
+# 运行应用
+CMD ["wrangler", "pages", "dev", "./", "--kv", "img_url", "--port", "8080", "--binding", "BASIC_USER=${BASIC_USER}", "--binding", "BASIC_PASS=${BASIC_PASS}", "--persist-to", "./data", "--log-level", "none"]
